@@ -47,7 +47,7 @@ const PHOTOS = [
   "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=600&h=400&fit=crop",
   "https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=600&h=400&fit=crop",
 ];
-const ADMIN_CREDS = { email: "admin@casafinance.com", password: "casa2024" };
+const ADMIN_CREDS = { email: "admin@casafinance.com", password: "CasaDeals2026!!!" };
 const fmt = (n) => "$" + Math.round(n).toLocaleString();
 const pct = (n) => (n * 100).toFixed(1) + "%";
 
@@ -609,13 +609,12 @@ export default function App() {
           <ModalHead title="Admin Login" subtitle="Access your deal management dashboard." onClose={() => { setShowLogin(false); setLoginError(""); }} />
           <div style={{ padding: "20px 28px 28px", display: "flex", flexDirection: "column", gap: 16 }}>
             {loginError && <div style={{ background: C.redLight, color: C.red, padding: "10px 14px", borderRadius: 10, fontSize: 13, fontWeight: 600 }}>{loginError}</div>}
-            <Input label="Email" value={loginForm.email} onChange={v => setLoginForm(p => ({ ...p, email: v }))} placeholder="admin@casafinance.com" type="email" onKeyDown={e => { if (e.key === "Enter") handleLogin(); }} />
+            <Input label="Email" value={loginForm.email} onChange={v => setLoginForm(p => ({ ...p, email: v }))} placeholder="Enter admin email" type="email" onKeyDown={e => { if (e.key === "Enter") handleLogin(); }} />
             <Input label="Password" value={loginForm.password} onChange={v => setLoginForm(p => ({ ...p, password: v }))} placeholder="••••••••" type="password" onKeyDown={e => { if (e.key === "Enter") handleLogin(); }} />
             <button type="button" onClick={e => { e.preventDefault(); e.stopPropagation(); handleLogin(); }}
               style={{ padding: "12px 24px", borderRadius: 10, border: "none", background: C.accent, color: "#fff", fontFamily: FONT, fontSize: 14, fontWeight: 700, cursor: "pointer", width: "100%", boxShadow: `0 2px 12px ${C.accentGlow}` }}>
               Sign In
             </button>
-            <div style={{ fontSize: 12, color: C.muted, textAlign: "center" }}>admin@casafinance.com / casa2024</div>
           </div>
         </Modal>
       )}
