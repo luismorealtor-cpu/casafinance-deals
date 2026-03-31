@@ -52,10 +52,15 @@ const fmt = (n) => "$" + Math.round(n).toLocaleString();
 const pct = (n) => (n * 100).toFixed(1) + "%";
 
 function calcLoan(d, lp) {
-  const loanAmt = d.max_loan && d.max_loan > 0 ? d.max_loan : d.arv * lp.maxARV;
+  const totalCost = (+d.price || 0) + (+d.rehab || 0);
+  const ltcAmount = totalCost * 0.90;
+  const arvAmount = (+d.arv || 0) * (lp.maxARV || 0.70);
+  const autoLoan = Math.min(ltcAmount, arvAmount);
+  const loanAmt = d.max_loan && d.max_loan > 0 ? d.max_loan : autoLoan;
   const ltv = d.price > 0 ? loanAmt / d.price : 0;
   const ltArv = d.arv > 0 ? loanAmt / d.arv : 0;
-  return { loanAmt, ltv, ltArv };
+  const ltc = totalCost > 0 ? loanAmt / totalCost : 0;
+  return { loanAmt, ltv, ltArv, ltc, ltcAmount, arvAmount };
 }
 
 // ─── Components ───
@@ -647,9 +652,13 @@ export default function App() {
               <Input label="Rehab Est. ($)" value={dealForm.rehab || ""} onChange={v => setDealForm(p => ({ ...p, rehab: v }))} error={dealFormErrors.rehab} small type="number" />
             </div>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
-              <Input label="Approved Loan Amount ($)" value={dealForm.max_loan || ""} onChange={v => setDealForm(p => ({ ...p, max_loan: v }))} placeholder="Leave blank for auto (70% ARV)" type="number" />
-              {!dealForm.max_loan && dealForm.arv && (
-                <div style={{ fontSize: 12, color: C.muted, paddingBottom: 12 }}>Auto: {fmt(dealForm.arv * 0.70)}</div>
+              <Input label="Approved Loan Amount ($)" value={dealForm.max_loan || ""} onChange={v => setDealForm(p => ({ ...p, max_loan: v }))} placeholder="Leave blank for auto-calc" type="number" />
+              {!dealForm.max_loan && dealForm.arv && dealForm.price && (
+                <div style={{ fontSize: 11, color: C.muted, paddingBottom: 12, lineHeight: 1.5 }}>
+                  Auto: {fmt(Math.min((+dealForm.price + (+dealForm.rehab || 0)) * 0.90, +dealForm.arv * 0.70))}
+                  <br />
+                  <span style={{ fontSize: 10 }}>90% LTC: {fmt((+dealForm.price + (+dealForm.rehab || 0)) * 0.90)} · 70% ARV: {fmt(+dealForm.arv * 0.70)}</span>
+                </div>
               )}
             </div>
             <div>
