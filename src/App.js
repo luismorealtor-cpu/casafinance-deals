@@ -79,6 +79,7 @@ export default function App() {
   const [userFormErrors, setUserFormErrors] = useState({});
   const [editingUser, setEditingUser] = useState(null);
   const [confirmDeleteUser, setConfirmDeleteUser] = useState(null);
+  const [showInstallDismissed, setShowInstallDismissed] = useState(false);
 
   const flash = useCallback((msg) => { setToast(msg); setTimeout(() => setToast(null), 3000); }, []);
   const isMaster = adminUser && adminUser.role === "master";
@@ -333,6 +334,26 @@ export default function App() {
             {(() => { const p = calcLoan({ price: 200000, arv: 350000, rehab: 50000, max_loan: 0 }); return <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}><Stat label="90% LTC" value={fmt(p.ltcAmount)} /><Stat label="70% ARV" value={fmt(p.arvAmount)} /><Stat label="Result (lesser)" value={fmt(p.loanAmt)} color={C.accent} big /></div>; })()}
           </div>
         </>}
+
+        {/* Add to Home Screen - only on borrower view */}
+        {mode === "borrower" && bView === "deals" && !showInstallDismissed && (
+          <div style={{ textAlign: "center", padding: "40px 20px 20px" }}>
+            <button onClick={() => {
+              const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+              const isAndroid = /Android/.test(navigator.userAgent);
+              if (isIOS) {
+                flash("Tap the Share button ↑ then 'Add to Home Screen'");
+              } else if (isAndroid) {
+                flash("Tap the ⋮ menu then 'Add to Home Screen'");
+              } else {
+                flash("Use your browser menu to add this page to your home screen");
+              }
+              setShowInstallDismissed(true);
+            }} style={{ background: "none", border: "none", color: C.muted, fontSize: 13, cursor: "pointer", fontFamily: FONT, textDecoration: "underline", padding: "8px 16px" }}>
+              Add to Home Screen
+            </button>
+          </div>
+        )}
       </div>
 
       {selectedDeal && <Modal onClose={() => setSelectedDeal(null)} wide>
